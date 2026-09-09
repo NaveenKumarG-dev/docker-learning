@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import BlogForm from "../components/BlogForm";
+import { getBlog, updateBlog as saveBlog } from "../api";
 
 function EditBlog() {
   const { id } = useParams();
@@ -9,32 +10,13 @@ function EditBlog() {
   const [blog, setBlog] = useState(null);
 
   useEffect(() => {
-    const blogs = JSON.parse(localStorage.getItem("blogs")) || [];
-    const existingBlog = blogs.find((blog) => blog.id === id);
-
-    if (!existingBlog) {
-      navigate("/");
-      return;
-    }
-
-    setBlog(existingBlog);
+    getBlog(id)
+      .then(setBlog)
+      .catch(() => navigate("/"));
   }, [id, navigate]);
 
-  const updateBlog = (data) => {
-    const blogs = JSON.parse(localStorage.getItem("blogs")) || [];
-
-    const updatedBlogs = blogs.map((item) =>
-      item.id === id
-        ? {
-            ...item,
-            ...data,
-            updatedAt: new Date().toISOString(),
-          }
-        : item
-    );
-
-    localStorage.setItem("blogs", JSON.stringify(updatedBlogs));
-
+  const updateBlog = async (data) => {
+    await saveBlog(id, data);
     navigate("/");
   };
 

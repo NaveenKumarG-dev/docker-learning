@@ -2,21 +2,26 @@ import { useEffect, useState } from "react";
 import { BookOpen, Search } from "lucide-react";
 import BlogCard from "../components/BlogCard";
 import EmptyState from "../components/EmptyState";
+import { deleteBlog as removeBlog, getBlogs } from "../api";
 
 function Home() {
   const [blogs, setBlogs] = useState([]);
   const [search, setSearch] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const storedBlogs = JSON.parse(localStorage.getItem("blogs")) || [];
-    setBlogs(storedBlogs);
+    getBlogs()
+      .then(setBlogs)
+      .catch((requestError) => setError(requestError.message));
   }, []);
 
-  const deleteBlog = (id) => {
-    const updatedBlogs = blogs.filter((blog) => blog.id !== id);
-
-    setBlogs(updatedBlogs);
-    localStorage.setItem("blogs", JSON.stringify(updatedBlogs));
+  const deleteBlog = async (id) => {
+    try {
+      await removeBlog(id);
+      setBlogs((currentBlogs) => currentBlogs.filter((blog) => blog.id !== id));
+    } catch (requestError) {
+      setError(requestError.message);
+    }
   };
 
   const filteredBlogs = blogs.filter(
@@ -62,7 +67,12 @@ function Home() {
         )}
       </div>
 
-      {blogs.length === 0 ? (
+      {error ? (
+        <div className="no-results">
+          <h3>Could not load posts</h3>
+          <p>{error}</p>
+        </div>
+      ) : blogs.length === 0 ? (
         <EmptyState />
       ) : filteredBlogs.length === 0 ? (
         <div className="no-results">

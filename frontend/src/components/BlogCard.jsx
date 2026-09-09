@@ -24,7 +24,7 @@ function BlogCard({ blog, onDelete }) {
         <div className="blog-card-footer">
           <div className="date">
             <Calendar size={15} />
-            {new Date(blog.createdAt).toLocaleDateString()}
+            {new Date(blog.created_at).toLocaleDateString()}
           </div>
 
           <div className="card-actions">

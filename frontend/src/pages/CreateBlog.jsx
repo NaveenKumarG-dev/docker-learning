@@ -1,20 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import BlogForm from "../components/BlogForm";
+import { createBlog as saveBlog } from "../api";
 
 function CreateBlog() {
   const navigate = useNavigate();
 
-  const createBlog = (data) => {
-    const blogs = JSON.parse(localStorage.getItem("blogs")) || [];
-
-    const newBlog = {
-      id: crypto.randomUUID(),
-      ...data,
-      createdAt: new Date().toISOString(),
-    };
-
-    localStorage.setItem("blogs", JSON.stringify([newBlog, ...blogs]));
-
+  const createBlog = async (data) => {
+    await saveBlog(data);
     navigate("/");
   };
 
