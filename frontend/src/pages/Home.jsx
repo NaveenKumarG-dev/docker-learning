@@ -4,15 +4,27 @@ import BlogCard from "../components/BlogCard";
 import EmptyState from "../components/EmptyState";
 import { deleteBlog as removeBlog, getBlogs } from "../api";
 
+import { DEFAULT_POSTS } from "../defaultPosts";
+
 function Home() {
   const [blogs, setBlogs] = useState([]);
   const [search, setSearch] = useState("");
   const [error, setError] = useState("");
+  const [isOffline, setIsOffline] = useState(false);
 
   useEffect(() => {
     getBlogs()
-      .then(setBlogs)
-      .catch((requestError) => setError(requestError.message));
+      .then((data) => {
+        setBlogs(data);
+        setError("");
+        setIsOffline(false);
+      })
+      .catch((requestError) => {
+        console.warn("Backend unavailable, falling back to default posts", requestError);
+        setBlogs(DEFAULT_POSTS);
+        setIsOffline(true);
+        setError(""); // clear error so it displays the grid
+      });
   }, []);
 
   const deleteBlog = async (id) => {
