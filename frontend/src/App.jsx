@@ -8,7 +8,7 @@ function App() {
   return (
     <BrowserRouter>
       <Navbar />
-
+      {/* version 3 */}
       <main className="app-container">
         <Routes>
           <Route path="/" element={<Home />} />
