@@ -6,9 +6,8 @@ import EditBlog from "./pages/EditBlog";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Navbar />
-      {/* version 3 */}
       <main className="app-container">
         <Routes>
           <Route path="/" element={<Home />} />
